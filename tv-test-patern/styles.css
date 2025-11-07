@@ -1,0 +1,766 @@
+/* ============================================
+   TV Test Pattern Stylesheet
+   ============================================
+   This stylesheet creates a classic television test pattern
+   with color bars, grayscale gradients, timers, and corner indicators.
+*/
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body: Centers the container and sets black background */
+body {
+    font-family: 'Arial', sans-serif;
+    background: #000;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Main Container: 16:9 aspect ratio, responsive sizing */
+.container {
+    position: relative;
+    width: 90vw;
+    height: 90vh;
+    max-width: 1920px;
+    max-height: 1080px;
+    background: #fff;
+    aspect-ratio: 16 / 9;
+}
+
+/* ============================================
+   BORDER SECTION
+   ============================================ */
+
+/* Checkered Border: Outer border with alternating black/white squares */
+.checkered-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Creates checkered pattern using two repeating gradients */
+    background-image: 
+        repeating-linear-gradient(
+            0deg,
+            #000 0px, #000 25px,
+            #fff 25px, #fff 50px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            #000 0px, #000 25px,
+            #fff 25px, #fff 50px
+        );
+    background-size: 50px 50px;
+    z-index: 1;
+    padding: 25px;
+}
+
+/* Top/Bottom White Bars: Horizontal bars with vertical black/white divisions */
+.border-white-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 25px;
+    background: #ffffff;
+    /* Vertical divisions: alternating black and white squares */
+    background-image: 
+        repeating-linear-gradient(
+            90deg,
+            #000 0px, #000 25px,
+            #fff 25px, #fff 50px
+        );
+    background-size: 50px 100%;
+    z-index: 2;
+}
+
+/* Bottom white bar variant */
+.border-white-bar.bottom {
+    top: auto;
+    bottom: 0;
+}
+
+/* Grid Background: SMPTE 50% Mid-Gray background with white grid overlay */
+.grid-background {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    width: calc(100% - 50px);
+    height: calc(100% - 50px);
+    /* White grid lines on SMPTE mid-gray background */
+    background-image: 
+        linear-gradient(rgba(255, 255, 255) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255) 1px, transparent 1px);
+    background-size: 25px 25px;
+    background-color: #808080; /* SMPTE 50% Mid-Gray */
+    z-index: 2;
+}
+
+/* ============================================
+   CENTRAL CIRCLE SECTION
+   ============================================ */
+
+/* Central Circle: Main circular test pattern container */
+.central-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    background: #fff;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Top Section Bars - SMPTE 80% Gray */
+.top-gray-bar {
+    width: 100%;
+    height: 4%;
+    background: #cccccc; /* SMPTE 80% Gray */
+    position: relative;
+    top: 0%;
+}
+
+.top-white-bar {
+    width: 100%;
+    height: 4%;
+    background: #ffffff;
+    position: relative;
+    top: 0%;
+}
+
+.top-black-bar {
+    width: 100%;
+    height: 8%;
+    background: #000000;
+    position: relative;
+    top: 0%;
+}
+
+/* Top Vertical Bars: Alternating black and gray bars */
+.top-vertical-bars {
+    display: flex;
+    width: 100%;
+    height: 9%;
+    position: relative;
+    top: 0%;
+}
+
+.vertical-bar {
+    flex: 1;
+    height: 100%;
+}
+
+.vertical-bar.gray {
+    background: #808080; /* SMPTE 50% Mid-Gray */
+}
+
+.vertical-bar.black {
+    background: #000000;
+}
+
+/* ============================================
+   COLOR BARS SECTION
+   ============================================ */
+
+/* Main Color Bars: Standard TV test pattern color bars */
+.main-color-bars {
+    display: flex;
+    width: 100%;
+    height: 33%;
+    position: relative;
+    top: 0%;
+}
+
+.color-bar {
+    flex: 1;
+    height: 100%;
+}
+
+.color-bar:last-child {
+    border-right: none;
+}
+
+/* Color Bar Colors - SMPTE Standard RGB Values */
+/* All colors use full saturation primary and secondary colors per SMPTE specifications */
+.color-bar.yellow {
+    background: #ffff00; /* SMPTE Yellow: RGB(255, 255, 0) */
+}
+
+.color-bar.cyan {
+    background: #00ffff; /* SMPTE Cyan: RGB(0, 255, 255) */
+}
+
+.color-bar.green {
+    background: #00ff00; /* SMPTE Green: RGB(0, 255, 0) */
+}
+
+.color-bar.magenta {
+    background: #ff00ff; /* SMPTE Magenta: RGB(255, 0, 255) */
+}
+
+.color-bar.red {
+    background: #ff0000; /* SMPTE Red: RGB(255, 0, 0) */
+}
+
+.color-bar.blue {
+    background: #0000ff; /* SMPTE Blue: RGB(0, 0, 255) */
+}
+
+/* Standby Box: Overlaid on color bars */
+.standby-box {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    background: #000;
+    padding: 8px 12px;
+    text-align: center;
+    z-index: 10;
+}
+
+.standby-text {
+    color: #fff;
+    font-size: 1.2vw;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* ============================================
+   TIMERS AND CENTER BAR SECTION
+   ============================================ */
+
+/* Center Black Bar: Vertical divider bar in the center */
+.center-black-bar {
+    position: absolute;
+    left: 50%;
+    top: 44%;
+    transform: translateX(-50%);
+    width: 12%;
+    height: 23%;
+    background: #000;
+    z-index: 200; /* Highest z-index to appear above all other elements */
+    pointer-events: none;
+}
+
+/* Timers Container: Horizontal black band containing two timers */
+.timers-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    background: transparent;
+    height: 6%;
+    align-items: center;
+}
+
+.timer-box {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+
+/* Timer boxes positioned to avoid center black bar */
+.timer-box:first-child {
+    width: calc(50% - 6%);
+}
+
+.timer-box:last-child {
+    width: calc(50% - 6%);
+}
+
+.timer {
+    color: #fff;
+    font-size: 1.5vw;
+    font-weight: bold;
+    font-family: 'Courier New', 'Lucida Console', monospace;
+    letter-spacing: 1px;
+}
+
+/* Blinking Colon Animation */
+.blinking-colon {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   SQUARES GRID SECTION
+   ============================================ */
+
+/* Grid of Black Squares: Below timers, split by center bar */
+.squares-grid {
+    position: absolute;
+    top: 56%;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    background: #000000;
+    height: 5%;
+}
+
+/* Shared styles for left and right square rows */
+.squares-row-left,
+.squares-row-right {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.squares-row-left {
+    width: calc(100% - 50%);
+    justify-content: flex-start;
+    z-index: 5;
+}
+
+.squares-row-right {
+    width: calc(100% - 50%);
+    justify-content: flex-end;
+    z-index: 3;
+}
+
+/* Individual Square: Black with white borders (no right border) */
+.square {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #000;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: none;
+    box-sizing: border-box;
+    height: 115%;
+}
+
+/* Center Squares: Squares inside the center black bar */
+.center-squares-grid-top {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    background: #000000;
+    height: 50%;
+    top: 0%;
+}
+
+.center-squares-grid-bottom {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    background: #000000;
+    height: 50%;
+    top: 50%;
+}
+
+.center-square-top {
+    width: 50%;
+    aspect-ratio: 1;
+    background: #000;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.center-square-bottom {
+    width: 50%;
+    aspect-ratio: 1;
+    background: #000;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+/* ============================================
+   VERTICAL GRAYSCALE BARS SECTION
+   ============================================ */
+
+/* Vertical Grayscale Container: Gradient from black to white */
+.vertical-grayscale-container {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    top: 0%;
+}
+
+.vertical-grayscale-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.vertical-grayscale-bars {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    gap: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.v-bar {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.v-bar:last-child {
+    border-right: none;
+}
+
+/* Grayscale Gradient: SMPTE standard 10-step grayscale from black to white */
+/* Values based on SMPTE grayscale standards for display calibration */
+.v-bar.black {
+    background: #000000; /* SMPTE 0% - Pure Black */
+}
+
+.v-bar.very-dark-gray {
+    background: #1a1a1a; /* SMPTE ~10% Gray */
+}
+
+.v-bar.dark-gray {
+    background: #333333; /* SMPTE ~20% Gray */
+}
+
+.v-bar.gray {
+    background: #4d4d4d; /* SMPTE ~30% Gray */
+}
+
+.v-bar.light-gray {
+    background: #808080; /* SMPTE 50% - Mid Gray */
+}
+
+.v-bar.very-light-gray {
+    background: #999999; /* SMPTE ~60% Gray */
+}
+
+.v-bar.dark-silver {
+    background: #b3b3b3; /* SMPTE ~70% Gray */
+}
+
+.v-bar.silver {
+    background: #cccccc; /* SMPTE 80% Gray */
+}
+
+.v-bar.light-silver {
+    background: #e6e6e6; /* SMPTE ~90% Gray */
+}
+
+.v-bar.white {
+    background: #ffffff; /* SMPTE 100% - Pure White */
+}
+
+/* ============================================
+   CONTACT SECTION
+   ============================================ */
+
+/* No Signal Container: Contact information and social icons */
+.no-signal-container {
+    display: flex;
+    width: 100%;
+    margin: 2.5% auto;
+    align-items: center;
+    height: 8%;
+    gap: 0;
+    position: absolute;
+    top: 67%;
+    z-index: 8;
+    justify-content: center;
+}
+
+/* Fine Lines: Vertical line pattern for detail testing */
+.fine-lines {
+    height: 12%;
+    background-color: #fff;
+    /* Thin alternating black and white vertical lines */
+    background-image: repeating-linear-gradient(
+        90deg,
+        #000 0px,
+        #000 1px,
+        #fff 1px,
+        #fff 2px
+    );
+    background-size: 2px 100%;
+    display: flex;
+    position: relative;
+    top: 0%;
+}
+
+.no-signal-box {
+    background: #000;
+    padding: 8px 20px;
+    height: 65%;
+    text-align: center;
+    white-space: nowrap;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.no-signal-text {
+    color: #fff;
+    font-size: 1.2vw;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: 'Arial Black', 'Impact', sans-serif;
+}
+
+/* Social Icons: Container for social media links */
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-left: 20px;
+    align-items: center;
+}
+
+.social-icon {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.social-icon:hover {
+    opacity: 0.7;
+}
+
+.social-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Link styling */
+a {
+    color: inherit;
+}
+
+/* ============================================
+   BOTTOM COLOR BARS SECTION
+   ============================================ */
+
+/* Bottom Color Bars: Simplified pattern at bottom */
+.bottom-color-bars {
+    display: flex;
+    width: 100%;
+    height: 14%;
+    margin-top: auto;
+    margin-bottom: 0%;
+}
+
+/* ============================================
+   CORNER CIRCLES SECTION
+   ============================================ */
+
+/* Corner Circles: Aspect ratio indicators in four corners */
+.corner-circle {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: #fff;
+    z-index: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Corner positioning */
+.corner-circle.top-left {
+    top: 35px;
+    left: 35px;
+}
+
+.corner-circle.top-right {
+    top: 35px;
+    right: 35px;
+}
+
+.corner-circle.bottom-left {
+    bottom: 35px;
+    left: 35px;
+}
+
+.corner-circle.bottom-right {
+    bottom: 35px;
+    right: 35px;
+}
+
+.corner-content {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Background color variants for corners - Using SMPTE standard colors */
+.corner-content.blue-bg {
+    background: #0000ff; /* SMPTE Blue: RGB(0, 0, 255) */
+    border-radius: 50%;
+}
+
+.corner-content.yellow-bg {
+    background: #ffff00; /* SMPTE Yellow: RGB(255, 255, 0) */
+    border-radius: 50%;
+}
+
+.corner-numbers {
+    right: 10%;
+    position: relative;
+}
+
+.corner-numbers.white-text .corner-number {
+    color: #ffffff;
+}
+
+.corner-number {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #000;
+    font-family: 'Arial Black', 'Impact', sans-serif;
+}
+
+/* Corner Grid: 2x2 grid pattern inside corner circles */
+.corner-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1px;
+    width: 50px;
+    height: 50px;
+    position: relative;
+}
+
+.grid-square {
+    background: #000;
+    border: 2px solid #000;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Pattern overlay on grid squares */
+.grid-square::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Vertical line pattern */
+    background-image: repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 2px,
+        #fff 2px,
+        #fff 3px
+    );
+    background-size: 3px 100%;
+}
+
+/* White grid variant: Inverted colors for blue background */
+.corner-grid.white-grid .grid-square {
+    background: #ffffff;
+    border: 2px solid #ffffff;
+}
+
+.corner-grid.white-grid .grid-square::before {
+    background-image: repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 2px,
+        #000 2px,
+        #000 3px
+    );
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Mobile and tablet adjustments */
+@media (max-width: 768px) {
+    .standby-text {
+        font-size: 2.5vw;
+    }
+    
+    .timer {
+        font-size: 2vw;
+    }
+    
+    .no-signal-text {
+        font-size: 2vw;
+    }
+    
+    .social-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .social-icons {
+        gap: 10px;
+        margin-left: 15px;
+    }
+    
+    .corner-circle {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .corner-number {
+        font-size: 18px;
+    }
+    
+    .corner-grid {
+        width: 35px;
+        height: 35px;
+    }
+}
