@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <link rel="shortcut icon" href="./.favicon.ico">
+   <title>Directory Contents</title>
+   <link rel="stylesheet" href="./.style.css">
+   <script src="./.sorttable.js"></script>
+   <style>
+      .loading {
+         text-align: center;
+         padding: 20px;
+         color: #666;
+      }
+      .error {
+         color: #d00;
+         padding: 20px;
+         text-align: center;
+      }
+   </style>
+</head>
+<body>
+<div id="container">
+   <h1>Directory Contents</h1>
+   <div id="loading" class="loading">Loading directory contents...</div>
+   <div id="error" class="error" style="display: none;"></div>
+   <table class="sortable" id="directory-table" style="display: none;">
+      <thead>
+         <tr>
+            <th>Filename</th>
+            <th>Type</th>
+            <th>Size</th>
+            <th>Date Modified</th>
+         </tr>
+      </thead>
+      <tbody id="directory-tbody">
+      </tbody>
+   </table>
+   <h2 id="hidden-files-toggle" style="display: none;">
+      <a href="#" id="toggle-hidden">Show hidden files</a>
+   </h2>
+</div>
+
+<script>
+(function() {
+   'use strict';
+   
+   // Project list - can be auto-generated or manually maintained
+   // This list is generated from the actual directory structure
+   const projects = [
+      { name: 'animated-tv-noise-in-js', type: 'dir', path: 'animated-tv-noise-in-js/' },
+      { name: 'error-404-hacker theme', type: 'dir', path: 'error-404-hacker theme/' },
+      { name: 'game-of-life-evolves-in-3d', type: 'dir', path: 'game-of-life-evolves-in-3d/' },
+      { name: 'interactive-history-of-the-internet-with-pagination', type: 'dir', path: 'interactive-history-of-the-internet-with-pagination/' },
+      { name: 'philips-pm5644', type: 'dir', path: 'philips-pm5644/' },
+      { name: 'tv-test-patern', type: 'dir', path: 'tv-test-patern/' },
+      { name: 'example.html', type: 'file', path: 'example.html' },
+      { name: 'no-signal.html', type: 'file', path: 'no-signal.html' },
+      { name: 'README.md', type: 'file', path: 'README.md' },
+      { name: 'sd-ecr-1-1978-color-bars.html', type: 'file', path: 'sd-ecr-1-1978-color-bars.html' }
+   ];
+   
+   const hiddenFiles = [
+      { name: '.error.php', type: 'file', path: '.error.php' },
+      { name: '.favicon.ico', type: 'file', path: '.favicon.ico' },
+      { name: '.nojekyll', type: 'file', path: '.nojekyll' },
+      { name: '.sorttable.js', type: 'file', path: '.sorttable.js' },
+      { name: '.style.css', type: 'file', path: '.style.css' },
+      { name: 'index.php', type: 'file', path: 'index.php' }
+   ];
+   
+   let showHidden = false;
+   
+   // Pretty filesize function
+   function prettyFilesize(bytes) {
+      if (!bytes) return '&lt;Directory&gt;';
+      if (bytes < 1024) return bytes + ' Bytes';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+      return (bytes / 1073741824).toFixed(1) + ' GB';
+   }
+   
+   // Get file type description
+   function getFileType(filename, isDir) {
+      if (isDir) {
+         return '&lt;Directory&gt;';
+      }
+      
+      const ext = filename.split('.').pop().toLowerCase();
+      const types = {
+         'png': 'PNG Image',
+         'jpg': 'JPEG Image',
+         'jpeg': 'JPEG Image',
+         'svg': 'SVG Image',
+         'gif': 'GIF Image',
+         'ico': 'Windows Icon',
+         'txt': 'Text File',
+         'log': 'Log File',
+         'htm': 'HTML File',
+         'html': 'HTML File',
+         'xhtml': 'HTML File',
+         'shtml': 'HTML File',
+         'php': 'PHP Script',
+         'js': 'Javascript File',
+         'css': 'Stylesheet',
+         'md': 'Markdown File',
+         'pdf': 'PDF Document',
+         'xls': 'Spreadsheet',
+         'xlsx': 'Spreadsheet',
+         'doc': 'Microsoft Word Document',
+         'docx': 'Microsoft Word Document',
+         'zip': 'ZIP Archive',
+         'htaccess': 'Apache Config File',
+         'exe': 'Windows Executable'
+      };
+      
+      return types[ext] || (ext ? ext.toUpperCase() + ' File' : 'Unknown');
+   }
+   
+   // Format date
+   function formatDate(date) {
+      if (!date) return 'Unknown';
+      const d = new Date(date);
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const month = months[d.getMonth()];
+      const day = d.getDate();
+      const year = d.getFullYear();
+      const hours = d.getHours();
+      const minutes = d.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const hour12 = hours % 12 || 12;
+      const mins = minutes < 10 ? '0' + minutes : minutes;
+      return month + ' ' + day + ' ' + year + ' ' + hour12 + ':' + mins + ' ' + ampm;
+   }
+   
+   // Fetch file info (size, date) - this will work for files that are accessible
+   async function getFileInfo(path) {
+      try {
+         const response = await fetch(path, { method: 'HEAD' });
+         const size = response.headers.get('content-length');
+         const lastModified = response.headers.get('last-modified');
+         return {
+            size: size ? parseInt(size) : 0,
+            date: lastModified || null
+         };
+      } catch (e) {
+         return { size: 0, date: null };
+      }
+   }
+   
+   // Render table row
+   function renderRow(item, fileInfo) {
+      const isDir = item.type === 'dir';
+      const extn = getFileType(item.name, isDir);
+      const size = isDir ? '&lt;Directory&gt;' : prettyFilesize(fileInfo.size);
+      const sizekey = isDir ? '0' : fileInfo.size.toString();
+      const modtime = formatDate(fileInfo.date);
+      const timekey = fileInfo.date ? new Date(fileInfo.date).getTime().toString() : '0';
+      const classAttr = isDir ? 'dir' : 'file';
+      
+      // Check for favicon
+      let favicon = '';
+      if (isDir) {
+         // Check if favicon exists (we'll assume it might)
+         favicon = '';
+      }
+      
+      const row = document.createElement('tr');
+      row.className = classAttr;
+      row.innerHTML = `
+         <td><a href="./${item.path}"${favicon} class="name">${item.name}</a></td>
+         <td><a href="./${item.path}">${extn}</a></td>
+         <td sorttable_customkey="${sizekey}"><a href="./${item.path}">${size}</a></td>
+         <td sorttable_customkey="${timekey}"><a href="./${item.path}">${modtime}</a></td>
+      `;
+      return row;
+   }
+   
+   // Load directory contents
+   async function loadDirectory() {
+      const tbody = document.getElementById('directory-tbody');
+      const loading = document.getElementById('loading');
+      const table = document.getElementById('directory-table');
+      const error = document.getElementById('error');
+      
+      try {
+         // Combine visible and hidden files based on toggle
+         const allItems = [...projects];
+         if (showHidden) {
+            allItems.push(...hiddenFiles);
+         }
+         
+         // Sort items
+         allItems.sort((a, b) => {
+            // Directories first, then files
+            if (a.type !== b.type) {
+               return a.type === 'dir' ? -1 : 1;
+            }
+            return a.name.localeCompare(b.name);
+         });
+         
+         // Clear tbody
+         tbody.innerHTML = '';
+         
+         // For each item, try to get file info
+         for (const item of allItems) {
+            const fileInfo = await getFileInfo(item.path);
+            const row = renderRow(item, fileInfo);
+            tbody.appendChild(row);
+         }
+         
+         loading.style.display = 'none';
+         table.style.display = 'table';
+         
+         // Show/hide hidden files toggle
+         const toggle = document.getElementById('hidden-files-toggle');
+         if (toggle) {
+            toggle.style.display = 'block';
+         }
+         
+      } catch (e) {
+         console.error('Error loading directory:', e);
+         loading.style.display = 'none';
+         error.style.display = 'block';
+         error.textContent = 'Error loading directory contents. ' + e.message;
+      }
+   }
+   
+   // Toggle hidden files
+   function setupToggle() {
+      const toggleLink = document.getElementById('toggle-hidden');
+      if (toggleLink) {
+         toggleLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showHidden = !showHidden;
+            toggleLink.textContent = showHidden ? 'Hide hidden files' : 'Show hidden files';
+            loadDirectory();
+         });
+      }
+   }
+   
+   // Initialize
+   document.addEventListener('DOMContentLoaded', function() {
+      setupToggle();
+      loadDirectory();
+   });
+})();
+</script>
+</body>
+</html>
+
