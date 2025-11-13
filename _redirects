@@ -4,3 +4,4 @@
 # Ensure directories serve index.html
 /*/index.html /:splat/index.html 200
 
+
